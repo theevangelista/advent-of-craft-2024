@@ -6,22 +6,23 @@ import io.kotest.matchers.shouldBe
 
 class SantaCommunicatorTest : DescribeSpec({
     val numberOfDaysToRest = 2
-    val numberOfDayBeforeChristmas = 24
+    val christmas = SantaCommunicator.Christmas(24, numberOfDaysToRest)
     val logger = TestLogger()
     lateinit var communicator: SantaCommunicator
 
     beforeEach {
-        communicator = SantaCommunicator(numberOfDaysToRest)
+        communicator = SantaCommunicator(christmas)
     }
 
     describe("composeMessage") {
         it("should compose correct message") {
             communicator
                 .composeMessage(
-                    "Dasher",
-                    "North Pole",
-                    5,
-                    numberOfDayBeforeChristmas
+                    SantaCommunicator.Reindeer(
+                        "Dasher",
+                        "North Pole",
+                        5,
+                    ),
                 ) shouldBe "Dear Dasher, please return from North Pole in 17 day(s) to be ready and rest before Christmas."
         }
     }
@@ -29,10 +30,11 @@ class SantaCommunicatorTest : DescribeSpec({
     describe("isOverdue") {
         it("should detect overdue reindeer") {
             val overdue = communicator.isOverdue(
-                "Dasher",
-                "North Pole",
-                numberOfDayBeforeChristmas,
-                numberOfDayBeforeChristmas,
+                SantaCommunicator.Reindeer(
+                    "Dasher",
+                    "North Pole",
+                    christmas.numberOfDaysBeforeChristmas,
+                ),
                 logger
             )
 
@@ -42,10 +44,11 @@ class SantaCommunicatorTest : DescribeSpec({
 
         it("should return false when not overdue") {
             communicator.isOverdue(
-                "Dasher",
-                "North Pole",
-                numberOfDayBeforeChristmas - numberOfDaysToRest - 1,
-                numberOfDayBeforeChristmas,
+                SantaCommunicator.Reindeer(
+                    "Dasher",
+                    "North Pole",
+                    numberOfDaysToRest - christmas.numberOfDaysBeforeChristmas - 1,
+                ),
                 logger
             ) shouldBe false
         }

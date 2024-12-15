@@ -1,32 +1,32 @@
 package communication
 
-class SantaCommunicator(private val numberOfDaysToRest: Int) {
+class SantaCommunicator(private val christmas: Christmas) {
+
+    data class Reindeer(val name: String, val currentLocation: String, val daysToComeback: Int)
+    data class Christmas(val numberOfDaysBeforeChristmas: Int, val restDays: Int = 2) {
+        fun daysBeforeReturn(daysToComeback: Int): Int {
+            return numberOfDaysBeforeChristmas - daysToComeback - restDays
+        }
+    }
 
     fun composeMessage(
-        reindeerName: String,
-        currentLocation: String,
-        numbersOfDaysForComingBack: Int,
-        numberOfDaysBeforeChristmas: Int
+        reindeer: Reindeer,
     ): String {
-        val daysBeforeReturn = daysBeforeReturn(numbersOfDaysForComingBack, numberOfDaysBeforeChristmas)
-        return "Dear $reindeerName, please return from $currentLocation in $daysBeforeReturn day(s) to be ready and rest before Christmas."
+        val daysBeforeReturn = christmas.daysBeforeReturn(reindeer.daysToComeback)
+        val (name, currentLocation) = reindeer
+        return "Dear $name, please return from $currentLocation in $daysBeforeReturn day(s) to be ready and rest before Christmas."
     }
 
     fun isOverdue(
-        reindeerName: String,
-        currentLocation: String,
-        numbersOfDaysForComingBack: Int,
-        numberOfDaysBeforeChristmas: Int,
+        reindeer: Reindeer,
         logger: Logger
     ): Boolean {
-        if (daysBeforeReturn(numbersOfDaysForComingBack, numberOfDaysBeforeChristmas) <= 0) {
+        val daysBeforeReturn = christmas.daysBeforeReturn(reindeer.daysToComeback)
+        if (daysBeforeReturn <= 0) {
+            val (reindeerName, currentLocation) = reindeer
             logger.log("Overdue for $reindeerName located $currentLocation.")
             return true
         }
         return false
-    }
-
-    private fun daysBeforeReturn(numbersOfDaysForComingBack: Int, numberOfDaysBeforeChristmas: Int): Int {
-        return numberOfDaysBeforeChristmas - numbersOfDaysForComingBack - numberOfDaysToRest
     }
 }

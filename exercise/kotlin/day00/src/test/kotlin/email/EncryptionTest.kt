@@ -2,6 +2,7 @@ package email
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
@@ -32,6 +33,13 @@ class EncryptionTest : StringSpec({
                 encryption.encrypt(plainText)
             ) shouldBe plainText
         }
+    }
+
+    "should decrypt a file" {
+        val file = loadFile("EncryptedEmail.txt")
+        val decrypted = encryption.decrypt(file)
+        println(decrypted)
+        decrypted shouldContain "We are facing an unprecedented challenge in Christmas Town."
     }
 })
 
